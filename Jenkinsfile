@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    parameters {
+        choice(name: 'BRANCH_NAME', choices: ['dev', 'qa', 'stage', 'prod'], description: 'Select the branch name')
+    }
+    
     environment {
         TAG = "${GIT_COMMIT}"
         
@@ -28,48 +32,48 @@ pipeline {
     stages {
         stage('Docker Image Build IN Dev') {
             when {
-                branch 'dev'
+                expression { params.BRANCH_NAME == 'dev' }
             }
             steps {
                 echo "Building Docker Image and Push into Dockerhub" 
                 script {
-                    dockerBuildPush(${env.DEV_DC_URL}, ${env.DEV_DC_CREDS}, ${env.DEV_TAG})
+                    dockerBuildPush(DEV_DC_URL, DEV_DC_CREDS, DEV_TAG)
                 }
             }
         }
         
         stage('Docker Image pull tag push to qa') {
             when {
-                branch 'qa'
+                expression { params.BRANCH_NAME == 'qa' }
             }
             steps {
                 echo "Pulling Docker Image and Tagging and Push To qa" 
                 script {
-                dockerPullTagPush(${env.DEV_DC_URL}, ${env.DEV_DC_CREDS}, ${env.DEV_TAG}, ${env.QA_DC_URL}, ${env.QA_DC_CREDS}, ${env.QA_TAG})
+                    dockerPullTagPush(DEV_DC_URL, DEV_DC_CREDS, DEV_TAG, QA_DC_URL, QA_DC_CREDS, QA_TAG)
                 }
             }
         }
         
         stage('Docker Image pull tag push to stage') {
             when {
-                branch 'stage'
+                expression { params.BRANCH_NAME == 'stage' }
             }
             steps {
                 echo "Pulling Docker Image and Tagging and Push To stage" 
                 script {
-                    dockerPullTagPush(${env.QA_DC_URL}, ${env.QA_DC_CREDS}, ${env.QA_TAG}, ${env.STAGE_DC_URL}, ${env.STAGE_DC_CREDS}, ${env.STAGE_TAG})
+                    dockerPullTagPush(QA_DC_URL, QA_DC_CREDS, QA_TAG, STAGE_DC_URL, STAGE_DC_CREDS, STAGE_TAG)
                 }
             }
         }
         
         stage('Docker Image pull tag push to prod') {
             when {
-                branch 'prod'
+                expression { params.BRANCH_NAME == 'prod' }
             }
             steps {
                 echo "Pulling Docker Image and Tagging and Push To stage" 
                 script {
-                    dockerPullTagPush(${env.STAGE_DC_URL}, ${env.STAGE_DC_CREDS}, ${env.STAGE_TAG}, ${env.PROD_DC_URL}, ${env.PROD_DC_CREDS}, ${env.PROD_TAG})
+                    dockerPullTagPush(STAGE_DC_URL, STAGE_DC_CREDS, STAGE_TAG, PROD_DC_URL, PROD_DC_CREDS, PROD_TAG)
                 }
             }
         }
@@ -83,17 +87,16 @@ pipeline {
     }
 }
 
-    // Function for Docker Build and Push for DEV
-    def dockerBuildPush (String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
+// Function for Docker Build and Push for DEV
+def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
     def app = docker.build(SRC_DH_TAG)
     docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
         app.push()
     }
 }
 
-    // Function for Docker Pull, Tag, and Push for QA, Stage, and Prod
-    def dockerPullTagPush (String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
-   
+// Function for Docker Pull, Tag, and Push for QA, Stage, and Prod
+def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
     // Pull
     docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
         docker.image(SRC_DH_TAG).pull()
