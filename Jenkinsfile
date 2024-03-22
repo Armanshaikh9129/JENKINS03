@@ -92,7 +92,8 @@ pipeline {
 // Function for Docker Build and Push for DEV
 def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
     def app = docker.build(SRC_DH_TAG)
-    docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
+    docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS)
+    sh echo Pushing Docker image: ${DEST_DH_TAG} {
         app.push()
     }
 }
