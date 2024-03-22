@@ -34,7 +34,7 @@ pipeline {
     stages {
         stage('Docker Image Build IN Dev') {
             when {
-                expression { params.BRANCH_NAME == 'dev' }
+                expression { params.account == 'dev' }
             }
             steps {
                 echo "Building Docker Image and Push into Dockerhub" 
@@ -46,7 +46,7 @@ pipeline {
         
         stage('Docker Image pull tag push to qa') {
             when {
-                expression { params.BRANCH_NAME == 'qa' }
+                expression { params.account == 'qa' }
             }
             steps {
                 echo "Pulling Docker Image and Tagging and Push To qa" 
@@ -58,7 +58,7 @@ pipeline {
         
         stage('Docker Image pull tag push to stage') {
             when {
-                expression { params.BRANCH_NAME == 'stage' }
+                expression { params.account == 'stage' }
             }
             steps {
                 echo "Pulling Docker Image and Tagging and Push To stage" 
@@ -70,7 +70,7 @@ pipeline {
         
         stage('Docker Image pull tag push to prod') {
             when {
-                expression { params.BRANCH_NAME == 'prod' }
+                expression { params.account == 'prod' }
             }
             steps {
                 echo "Pulling Docker Image and Tagging and Push To stage" 
