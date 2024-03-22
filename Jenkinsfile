@@ -6,23 +6,23 @@ pipeline {
         TAG = "${GIT_COMMIT}"
         
         // DEV
-        DEV_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins:latest"
+        DEV_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins"
         DEV_DC_CREDS = "DOCKER/DEV"
         DEV_TAG = "${env.TAG}"
 
         // QA
-        QA_DC_URL = "https://registry.hub.docker.com/armansk9129/qa-jenkins:latest"
+        QA_DC_URL = "https://registry.hub.docker.com/armansk9129/qa-jenkins"
         QA_DC_CREDS = "DOCKER/qa"
         QA_TAG = "${env.TAG}"
 
         // Stage
-        STAGE_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins:latest"
-        STAGE_DC_CREDS = "DOCKER/DEV"
+        STAGE_DC_URL = "https://registry.hub.docker.com/armansk9129/stage-jenkins"
+        STAGE_DC_CREDS = "DOCKER/stage"
         STAGE_TAG = "${env.TAG}"
 
         // PROD
-        PROD_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins:latest"
-        PROD_DC_CREDS = "DOCKER/DEV"
+        PROD_DC_URL = "https://registry.hub.docker.com/armansk9129/prod-jenkins:latest"
+        PROD_DC_CREDS = "DOCKER/prod"
         PROD_TAG = "${env.TAG}"
     }
 
