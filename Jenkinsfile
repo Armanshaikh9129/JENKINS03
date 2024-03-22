@@ -39,7 +39,7 @@ pipeline {
             steps {
                 echo "Building Docker Image and Push into Dockerhub" 
                 script {
-                    dockerBuildPush(DEV_DC_URL, DEV_DC_CREDS, DEV_TAG)
+                    dockerBuildPush(env.DEV_DC_URL, env.DEV_DC_CREDS, env.DEV_TAG)
                 }
             }
         }
