@@ -93,8 +93,7 @@ pipeline {
 def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
     def app = docker.build(SRC_DH_TAG)
     docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS){
-    echo "Pushing Docker image: ${SRC_DH_TAG}"
-        app.push()
+    app.push()
     }
 }
 
