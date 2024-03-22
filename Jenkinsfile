@@ -1,10 +1,7 @@
 pipeline {
     agent any
     
-    parameters {
-        choice(name: 'BRANCH_NAME', choices: ['dev', 'qa', 'stage', 'prod'], description: 'Select the branch name')
-    }
-    
+   
     environment {
         TAG = "${GIT_COMMIT}"
         
@@ -27,6 +24,11 @@ pipeline {
         PROD_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins:latest"
         PROD_DC_CREDS = "DOCKER/DEV"
         PROD_TAG = "${env.TAG}"
+    }
+
+    parameters {
+            choice(name: 'account', choices: ['dev', 'qa', 'stage', 'prod'], description: 'Select the environment.')
+            string(name: 'commit_id', defaultValue: 'latest', description: 'provide commit id.')
     }
     
     stages {
