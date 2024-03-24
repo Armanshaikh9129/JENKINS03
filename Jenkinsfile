@@ -1,7 +1,6 @@
 pipeline {
     agent any
     
-   
     environment {
         TAG = "${GIT_COMMIT}"
         
@@ -27,11 +26,11 @@ pipeline {
     }
 
     parameters {
-            choice(name: 'account', choices: ['dev', 'qa', 'stage', 'prod'], description: 'Select the environment.')
-            string(name: 'commit_id', defaultValue: 'latest', description: 'provide commit id.')
+        choice(name: 'account', choices: ['dev', 'qa', 'stage', 'prod'], description: 'Select the environment.')
+        string(name: 'commit_id', defaultValue: 'latest', description: 'provide commit id.')
     }
     
-   stages {
+    stages {
         stage('Docker Image Build IN Dev') {
             when {
                 expression {
@@ -41,9 +40,9 @@ pipeline {
             steps {
                 echo "Building Docker Image Logging in to Docker Hub & Pushing the Image" 
                 
-                dockerBuildPush(env.DEV_DC_URL , env.DEV_DC_CREDS , env.DEV_TAG)
+                dockerBuildPush(env.DEV_DC_URL, env.DEV_DC_CREDS, env.DEV_TAG)
 
-                sh 'echo Image Pushed to DEV'
+                echo 'Image Pushed to DEV'
                 sh 'echo Deleting Local docker DEV Image'
             }
         }
@@ -54,7 +53,7 @@ pipeline {
                 }
             }
             steps {
-                dockerPullTagPush(env.DEV_DC_URL , env.DEV_DC_CREDS , env.DEV_TAG , env.QA_DC_URL , env.QA_DC_CREDS , env.QA_TAG)
+                dockerPullTagPush(env.DEV_DC_URL, env.DEV_DC_CREDS, env.DEV_TAG, env.QA_DC_URL, env.QA_DC_CREDS, env.QA_TAG)
             }
         }
         stage('Pull Tag push to STAGE') {
@@ -64,7 +63,7 @@ pipeline {
                 }
             }
             steps {
-                dockerPullTagPush(env.QA_DC_URL , env.QA_DC_CREDS , env.QA_TAG , env.STAGE_DC_URL , env.STAGE_DC_CREDS , env.STAGE_TAG)
+                dockerPullTagPush(env.QA_DC_URL, env.QA_DC_CREDS, env.QA_TAG, env.STAGE_DC_URL, env.STAGE_DC_CREDS, env.STAGE_TAG)
             }
         }
         stage('Pull Tag push to PROD') {
@@ -74,9 +73,11 @@ pipeline {
                 }
             }
             steps {
-                dockerPullTagPush(env.STAGE_DC_URL , env.STAGE_DC_CREDS , env.STAGE_TAG , env.PROD_DC_URL , env.PROD_DC_CREDS , env.PROD_TAG) 
+                dockerPullTagPush(env.STAGE_DC_URL, env.STAGE_DC_CREDS, env.STAGE_TAG, env.PROD_DC_URL, env.PROD_DC_CREDS, env.PROD_TAG) 
             }
         }
+    }
+    
     post { 
         always { 
             echo 'Deleting Project now !! '
@@ -87,12 +88,11 @@ pipeline {
 
 // Function for Docker Build and Push for DEV
 def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
-    def app = docker.build (SRC_DH_TAG)
+    def app = docker.build(SRC_DH_TAG)
     docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
         app.push()
     }
 }
-
 
 // Function for Docker Pull, Tag, and Push for QA, Stage, and Prod
 def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
@@ -100,10 +100,10 @@ def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG,
     docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
         docker.image(SRC_DH_TAG).pull()
     }
-    sh 'echo Image pulled successfully...'
+    echo 'Image pulled successfully...'
 
     // Tag
-    sh 'echo Tagging Docker image...'
+    echo 'Tagging Docker image...'
     sh "docker tag ${SRC_DH_TAG} ${DEST_DH_TAG}" 
 
     // Push
@@ -111,8 +111,8 @@ def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG,
         docker.image(DEST_DH_TAG).push()
     }
 
-    sh 'echo Image Pushed successfully...'
-    sh 'echo Deleting Local docker Images'
+    echo 'Image Pushed successfully...'
+    echo 'Deleting Local docker Images'
     sh "docker image rm ${SRC_DH_TAG}"  
     sh "docker image rm ${DEST_DH_TAG}" 
 }
