@@ -31,56 +31,52 @@ pipeline {
             string(name: 'commit_id', defaultValue: 'latest', description: 'provide commit id.')
     }
     
-    stages {
+   stages {
         stage('Docker Image Build IN Dev') {
             when {
-                expression { params.account == 'dev' }
-            }
-            steps {
-                echo "Building Docker Image and Push into Dockerhub" 
-                script {
-                    dockerBuildPush(env.DEV_DC_URL, env.DEV_DC_CREDS, env.DEV_TAG)
+                expression {
+                    params.account == 'dev'
                 }
             }
+            steps {
+                echo "Building Docker Image Logging in to Docker Hub & Pushing the Image" 
+                
+                dockerBuildPush(env.DEV_DC_URL , env.DEV_DC_CREDS , env.DEV_TAG)
+
+                sh 'echo Image Pushed to DEV'
+                sh 'echo Deleting Local docker DEV Image'
+            }
         }
-        
-        stage('Docker Image pull tag push to qa') {
+        stage('Pull Tag push to QA') {
             when {
-                expression { params.account == 'qa' }
-            }
-            steps {
-                echo "Pulling Docker Image and Tagging and Push To qa" 
-                script {
-                    dockerPullTagPush(DEV_DC_URL, DEV_DC_CREDS, DEV_TAG, QA_DC_URL, QA_DC_CREDS, QA_TAG)
+                expression {
+                    params.account == 'qa'
                 }
             }
+            steps {
+                dockerPullTagPush(env.DEV_DC_URL , env.DEV_DC_CREDS , env.DEV_TAG , env.QA_DC_URL , env.QA_DC_CREDS , env.QA_TAG)
+            }
         }
-        
-        stage('Docker Image pull tag push to stage') {
+        stage('Pull Tag push to STAGE') {
             when {
-                expression { params.account == 'stage' }
-            }
-            steps {
-                echo "Pulling Docker Image and Tagging and Push To stage" 
-                script {
-                    dockerPullTagPush(QA_DC_URL, QA_DC_CREDS, QA_TAG, STAGE_DC_URL, STAGE_DC_CREDS, STAGE_TAG)
+                expression {
+                    params.account == 'stage'
                 }
             }
+            steps {
+                dockerPullTagPush(env.QA_DC_URL , env.QA_DC_CREDS , env.QA_TAG , env.STAGE_DC_URL , env.STAGE_DC_CREDS , env.STAGE_TAG)
+            }
         }
-        
-        stage('Docker Image pull tag push to prod') {
+        stage('Pull Tag push to PROD') {
             when {
-                expression { params.account == 'prod' }
-            }
-            steps {
-                echo "Pulling Docker Image and Tagging and Push To stage" 
-                script {
-                    dockerPullTagPush(STAGE_DC_URL, STAGE_DC_CREDS, STAGE_TAG, PROD_DC_URL, PROD_DC_CREDS, PROD_TAG)
+                expression {
+                    params.account == 'prod'
                 }
             }
+            steps {
+                dockerPullTagPush(env.STAGE_DC_URL , env.STAGE_DC_CREDS , env.STAGE_TAG , env.PROD_DC_URL , env.PROD_DC_CREDS , env.PROD_TAG) 
+            }
         }
-    }
-    
     post { 
         always { 
             echo 'Deleting Project now !! '
