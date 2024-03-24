@@ -91,11 +91,12 @@ pipeline {
 
 // Function for Docker Build and Push for DEV
 def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
-    def app = docker.build(SRC_DH_TAG)
-    docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS){
-    app.push()
+    def app = docker.build("${SRC_DH_URL}:${SRC_DH_TAG}")
+    docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
+        app.push()
     }
 }
+
 
 // Function for Docker Pull, Tag, and Push for QA, Stage, and Prod
 def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
