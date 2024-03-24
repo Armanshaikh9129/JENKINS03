@@ -7,22 +7,22 @@ pipeline {
         // DEV
         DEV_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins"
         DEV_DC_CREDS = "DOCKER/DEV"
-        DEV_TAG = "${env.TAG}"
+        DEV_TAG =  "${env.DEV_DH_URL}" + ":" + "${env.TAG}"
 
         // QA
         QA_DC_URL = "https://registry.hub.docker.com/armansk9129/qa-jenkins"
         QA_DC_CREDS = "DOCKER/QA"
-        QA_TAG = "${env.TAG}"
+        QA_TAG = "${env.QA_DH_URL}" + ":" + "${env.TAG}"
 
         // Stage
         STAGE_DC_URL = "https://registry.hub.docker.com/armansk9129/stage-jenkins"
         STAGE_DC_CREDS = "DOCKER/STAGE"
-        STAGE_TAG = "${env.TAG}"
+        STAGE_TAG =  "${env.STAGE_DH_URL}" + ":" + "${env.TAG}"
 
         // PROD
         PROD_DC_URL = "https://registry.hub.docker.com/armansk9129/prod-jenkins:latest"
         PROD_DC_CREDS = "DOCKER/PROD"
-        PROD_TAG = "${env.TAG}"
+        PROD_TAG = "${env.PROD_DH_URL}" + ":" + "${env.TAG}"
     }
 
     parameters {
@@ -86,19 +86,19 @@ pipeline {
     }
 }
 
-// Function for Docker Build and Push for DEV
-def dockerBuildPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG) {
+//FOR DOCKER BUILD AND PUSH FOR DEV
+def dockerBuildPush( String SRC_DH_URL , String SRC_DH_CREDS , String SRC_DH_TAG ) {
     def app = docker.build(SRC_DH_TAG)
-    docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
-        app.push()
+    docker.withRegistry("https://" + SRC_DH_URL , SRC_DH_CREDS) {
+    app.push()
     }
 }
 
 // Function for Docker Pull, Tag, and Push for QA, Stage, and Prod
 def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
-    // Pull
-    docker.withRegistry(SRC_DH_URL, SRC_DH_CREDS) {
-        docker.image(SRC_DH_TAG).pull()
+     //FOR PULL
+	docker.withRegistry("https://" + SRC_DH_URL , SRC_DH_CREDS) {
+    docker.image(SRC_DH_TAG).pull()
     }
     echo 'Image pulled successfully...'
 
