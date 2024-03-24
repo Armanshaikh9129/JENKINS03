@@ -89,7 +89,7 @@ pipeline {
 //FOR DOCKER BUILD AND PUSH FOR DEV
 def dockerBuildPush( String SRC_DH_URL , String SRC_DH_CREDS , String SRC_DH_TAG ) {
     def app = docker.build(SRC_DH_TAG)
-    docker.withRegistry("https://" + SRC_DH_URL , SRC_DH_CREDS) {
+    docker.withRegistry(SRC_DH_URL , SRC_DH_CREDS) {
     app.push()
     }
 }
@@ -97,7 +97,7 @@ def dockerBuildPush( String SRC_DH_URL , String SRC_DH_CREDS , String SRC_DH_TAG
 // Function for Docker Pull, Tag, and Push for QA, Stage, and Prod
 def dockerPullTagPush(String SRC_DH_URL, String SRC_DH_CREDS, String SRC_DH_TAG, String DEST_DH_URL, String DEST_DH_CREDS, String DEST_DH_TAG) {
      //FOR PULL
-	docker.withRegistry("https://" + SRC_DH_URL , SRC_DH_CREDS) {
+	docker.withRegistry( SRC_DH_URL , SRC_DH_CREDS) {
     docker.image(SRC_DH_TAG).pull()
     }
     echo 'Image pulled successfully...'
