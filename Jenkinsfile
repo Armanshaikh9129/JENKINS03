@@ -7,22 +7,22 @@ pipeline {
         // DEV
         DEV_DC_URL = "https://registry.hub.docker.com/armansk9129/dev-jenkins"
         DEV_DC_CREDS = "DOCKER/DEV"
-        DEV_TAG =  "${env.DEV_DC_URL}" + ":" + "${env.TAG}"
+        DEV_TAG =  "${env.TAG}"
 
         // QA
         QA_DC_URL = "https://registry.hub.docker.com/armansk9129/qa-jenkins"
         QA_DC_CREDS = "DOCKER/QA"
-        QA_TAG = "${env.QA_DC_URL}" + ":" + "${env.TAG}"
+        QA_TAG = "${env.TAG}"
 
         // Stage
         STAGE_DC_URL = "https://registry.hub.docker.com/armansk9129/stage-jenkins"
         STAGE_DC_CREDS = "DOCKER/STAGE"
-        STAGE_TAG =  "${env.STAGE_DC_URL}" + ":" + "${env.TAG}"
+        STAGE_TAG =  "${env.TAG}"
 
         // PROD
         PROD_DC_URL = "https://registry.hub.docker.com/armansk9129/prod-jenkins:latest"
         PROD_DC_CREDS = "DOCKER/PROD"
-        PROD_TAG = "${env.PROD_DC_URL}" + ":" + "${env.TAG}"
+        PROD_TAG = "${env.TAG}"
     }
 
     parameters {
